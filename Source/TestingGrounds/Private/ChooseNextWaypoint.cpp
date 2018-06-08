@@ -1,28 +1,30 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ChooseNextWaypoint.h"
-#include "PatrollingGuard.h"
+#include "PatrollingGuard.h" // TODO remove coupling
+#include "AIController.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 
 EBTNodeResult::Type UChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	auto BlackboardComp = OwnerComp.GetBlackboardComponent();
-
-	auto Index = BlackboardComp->GetValueAsInt(IndexKey.SelectedKeyName);
-
-	UE_LOG(LogTemp, Warning, TEXT("UChooseNextWaypoint::ExecuteTask Index: %i"), Index);
-
+	// Get patrol points
 	auto AIController = OwnerComp.GetAIOwner();
-	auto PatrollingGuard = Cast<APatrollingGuard>(AIController);
+	auto ControlledPawn = AIController->GetPawn();
+	auto PatrollingGuard = Cast<APatrollingGuard>(ControlledPawn);
 	if (!PatrollingGuard) return EBTNodeResult::Failed;
 	auto PatrolPoints = PatrollingGuard->PatrolPoints;
-	if (!PatrolPoints) return EBTNodeResult::Failed;
+	if (PatrolPoints.Num() == 0) return EBTNodeResult::Failed;
 
-	BlackboardComp->SetValueAsObject(WaypointKey.SelectedKeyName, PatrolPoints.Get(Index));
+	// Set next waypoint
+	auto BlackboardComp = OwnerComp.GetBlackboardComponent();
+	auto Index = BlackboardComp->GetValueAsInt(IndexKey.SelectedKeyName);
+	BlackboardComp->SetValueAsObject(WaypointKey.SelectedKeyName, PatrolPoints[Index]);
+	UE_LOG(LogTemp, Warning, TEXT("UChooseNextWaypoint::ExecuteTask %s Index: %i"), *ControlledPawn->GetName(), Index);
 
-	auto NextIndex = (Index + 1) % PatrolPoints.Length;
+	// Cycle index
+	auto NextIndex = (Index + 1) % PatrolPoints.Num();
 	BlackboardComp->SetValueAsInt(IndexKey.SelectedKeyName, NextIndex);
 
 	return EBTNodeResult::Succeeded;
