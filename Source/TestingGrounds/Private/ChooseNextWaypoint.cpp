@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ChooseNextWaypoint.h"
-#include "PatrollingGuard.h" // TODO remove coupling
 #include "AIController.h"
 #include "PatrolRoute.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
