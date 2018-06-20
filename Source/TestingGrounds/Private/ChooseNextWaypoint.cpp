@@ -24,7 +24,7 @@ EBTNodeResult::Type UChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& Own
 	auto BlackboardComp = OwnerComp.GetBlackboardComponent();
 	auto Index = BlackboardComp->GetValueAsInt(IndexKey.SelectedKeyName);
 	BlackboardComp->SetValueAsObject(WaypointKey.SelectedKeyName, PatrolPoints[Index]);
-	UE_LOG(LogTemp, Warning, TEXT("UChooseNextWaypoint::ExecuteTask %s Index: %i"), *ControlledPawn->GetName(), Index);
+	// UE_LOG(LogTemp, Warning, TEXT("UChooseNextWaypoint::ExecuteTask %s Index: %i"), *ControlledPawn->GetName(), Index);
 
 	// Cycle index
 	auto NextIndex = (Index + 1) % PatrolPoints.Num();
