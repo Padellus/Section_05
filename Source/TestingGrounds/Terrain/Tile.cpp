@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tile.h"
+#include "WorldCollision.h"
+#include "DrawDebugHelpers.h"
 
 
 // Sets default values
@@ -16,6 +18,7 @@ void ATile::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CastSphere(GetActorLocation(), 300);
 }
 
 // Called every frame
@@ -38,5 +41,30 @@ void ATile::PlaceActors(TSubclassOf<AActor> Spawnable, int MinSpawn, int MaxSpaw
 		Spawned->SetActorRelativeLocation(SpawnPoint);
 		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 	}
+}
+
+bool ATile::CastSphere(FVector Location, float Radius)
+{
+	FHitResult HitResult;
+	bool bHit = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		Location,
+		Location,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(Radius)
+	);
+	FColor DebugSphereColor = bHit ? FColor::Red : FColor::Green;
+	DrawDebugCapsule(
+		GetWorld(),
+		Location,
+		0,
+		Radius,
+		FQuat::Identity,
+		DebugSphereColor,
+		true,
+		100
+	);
+	return bHit;
 }
 

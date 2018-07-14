@@ -2,7 +2,7 @@
 
 #include "Mannequin.h"
 #include "../Weapons/Gun.h"
-#include "Runtime/Engine/Classes/Camera/CameraComponent.h"
+#include "Camera/CameraComponent.h"
 
 
 // Sets default values
