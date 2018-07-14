@@ -24,6 +24,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Generate")
-	void PlaceActors();
+	void PlaceActors(TSubclassOf<AActor> Spawnable, int MinSpawn, int MaxSpawn);
 	
 };
