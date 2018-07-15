@@ -26,16 +26,17 @@ void ATile::Tick(float DeltaTime)
 
 }
 
-void ATile::PlaceActors(TSubclassOf<AActor> Spawnable, int MinSpawn, int MaxSpawn, float Radius)
+void ATile::PlaceActors(TSubclassOf<AActor> Spawnable, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale)
 {
 	int NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 	for (size_t i = 0; i < NumberToSpawn; i++)
 	{
 		FVector SpawnPoint;
-		bool bFound = FindEmptyLocation(SpawnPoint, Radius);
+		float RandomScale = FMath::RandRange(MinScale, MaxScale);
+		bool bFound = FindEmptyLocation(SpawnPoint, Radius * RandomScale);
 		if (bFound) {
 			//UE_LOG(LogTemp, Warning, TEXT("SpawnPoint: %s"), *SpawnPoint.ToCompactString());
-			PlaceActor(Spawnable, SpawnPoint);
+			PlaceActor(Spawnable, SpawnPoint, FMath::RandRange(-180.f, 180.f), RandomScale);
 		}
 	}
 }
@@ -58,11 +59,13 @@ bool ATile::FindEmptyLocation(FVector& OutLocation, float Radius)
 	return false;
 }
 
-void ATile::PlaceActor(TSubclassOf<AActor> Spawnable, FVector SpawnPoint)
+void ATile::PlaceActor(TSubclassOf<AActor> Spawnable, FVector SpawnPoint, float Rotation, float Scale)
 {
 	AActor* Spawned = GetWorld()->SpawnActor<AActor>(Spawnable);
 	Spawned->SetActorRelativeLocation(SpawnPoint);
 	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	Spawned->SetActorRotation(FRotator(0, Rotation, 0));
+	Spawned->SetActorScale3D(FVector(Scale));
 	return;
 }
 
@@ -78,17 +81,17 @@ bool ATile::CastSphere(FVector Location, float Radius)
 		ECollisionChannel::ECC_GameTraceChannel2,
 		FCollisionShape::MakeSphere(Radius)
 	);
-	FColor DebugSphereColor = bHit ? FColor::Red : FColor::Green;
-	DrawDebugCapsule(
-		GetWorld(),
-		GlobalLocation,
-		0,
-		Radius,
-		FQuat::Identity,
-		DebugSphereColor,
-		true,
-		100
-	);
+	//FColor DebugSphereColor = bHit ? FColor::Red : FColor::Green;
+	//DrawDebugCapsule(
+	//	GetWorld(),
+	//	GlobalLocation,
+	//	0,
+	//	Radius,
+	//	FQuat::Identity,
+	//	DebugSphereColor,
+	//	true,
+	//	100
+	//);
 	return bHit;
 }
 
