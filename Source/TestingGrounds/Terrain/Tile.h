@@ -8,6 +8,16 @@
 
 class UActorPool;
 
+USTRUCT()
+struct FSpawnPosition
+{
+	GENERATED_USTRUCT_BODY()
+
+	FVector Location;
+	float Rotation;
+	float Scale;
+};
+
 UCLASS()
 class TESTINGGROUNDS_API ATile : public AActor
 {
@@ -39,13 +49,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Generate")
 	void PlaceActors(TSubclassOf<AActor> Spawnable, int MinSpawn = 1, int MaxSpawn = 1, float Radius = 500, float MinScale = 1, float MaxScale = 1);
 
+	UFUNCTION(BlueprintCallable, Category = "Generate")
+	void PlaceAIPawns(TSubclassOf<APawn> Spawnable, int MinSpawn = 1, int MaxSpawn = 1, float Radius = 500);
+
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetPool(UActorPool* InPool);
 	
 private:
+	TArray<FSpawnPosition> GenerateRandomSpawnPositions(int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale);
+
 	bool FindEmptyLocation(FVector& OutLocation, float Radius);
 
-	void PlaceActor(TSubclassOf<AActor> Spawnable, FVector SpawnPoint, float Rotation, float Scale);
+	void PlaceActor(TSubclassOf<AActor> Spawnable, FSpawnPosition SpawnPosition);
+
+	void PlaceAIPawn(TSubclassOf<APawn> Spawnable, FSpawnPosition SpawnPosition);
 
 	bool CastSphere(FVector Location, float Radius);
 
