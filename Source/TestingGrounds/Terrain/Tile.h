@@ -56,13 +56,14 @@ public:
 	void SetPool(UActorPool* InPool);
 	
 private:
-	TArray<FSpawnPosition> GenerateRandomSpawnPositions(int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale);
+	template<class T>
+	void RandomlyPlaceActors(TSubclassOf<T> Spawnable, int MinSpawn = 1, int MaxSpawn = 1, float Radius = 500, float MinScale = 1, float MaxScale = 1);
 
 	bool FindEmptyLocation(FVector& OutLocation, float Radius);
 
 	void PlaceActor(TSubclassOf<AActor> Spawnable, FSpawnPosition SpawnPosition);
 
-	void PlaceAIPawn(TSubclassOf<APawn> Spawnable, FSpawnPosition SpawnPosition);
+	void PlaceActor(TSubclassOf<APawn> Spawnable, FSpawnPosition SpawnPosition);
 
 	bool CastSphere(FVector Location, float Radius);
 
