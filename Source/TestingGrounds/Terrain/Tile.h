@@ -21,6 +21,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Generate")
+	FVector BoundsMin;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Generate")
+	FVector BoundsMax;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -40,4 +48,7 @@ private:
 
 	UPROPERTY()
 	UActorPool* Pool;
+
+	UPROPERTY()
+	AActor* NavMeshBoundsVolume;
 };

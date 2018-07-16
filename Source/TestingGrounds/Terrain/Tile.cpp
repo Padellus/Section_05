@@ -12,17 +12,32 @@ ATile::ATile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BoundsMin = FVector(0., -2000., 0.);
+	BoundsMax = FVector(4000., 2000., 0.);
 }
 
 void ATile::SetPool(UActorPool* InPool)
 {
 	Pool = InPool;
+
+	NavMeshBoundsVolume = Pool->Checkout();
+	if (!NavMeshBoundsVolume) {
+		UE_LOG(LogTemp, Error, TEXT("Not enough actors in pool."));
+		return;
+	}
+	UE_LOG(LogTemp, Error, TEXT("[%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName());
+	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
 }
 
 // Called when the game starts or when spawned
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Pool->Return(NavMeshBoundsVolume);
 }
 
 // Called every frame
@@ -49,9 +64,7 @@ void ATile::PlaceActors(TSubclassOf<AActor> Spawnable, int MinSpawn, int MaxSpaw
 
 bool ATile::FindEmptyLocation(FVector& OutLocation, float Radius)
 {
-	FVector Min = FVector(0., -2000., 0.);
-	FVector Max = FVector(4000., 2000., 0.);
-	FBox Bounds = FBox(Min, Max);
+	FBox Bounds = FBox(BoundsMin, BoundsMax);
 	const int MAX_ATTEMPTS = 100;
 	for (size_t i = 0; i < MAX_ATTEMPTS; i++)
 	{

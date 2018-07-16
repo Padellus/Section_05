@@ -15,17 +15,27 @@ UActorPool::UActorPool()
 
 AActor* UActorPool::Checkout()
 {
-	return nullptr;
+	if (Pool.Num() == 0) {
+		UE_LOG(LogTemp, Warning, TEXT("Trying to checkout from actor pool, but pool is empty."));
+		return nullptr;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("ActorPool Checkout"));
+	return Pool.Pop(false);
 }
 
 void UActorPool::Return(AActor* ActorToReturn)
 {
-
+	Add(ActorToReturn);
 }
 
 void UActorPool::Add(AActor* ActorToAdd)
 {
-
+	if (!ActorToAdd) {
+		UE_LOG(LogTemp, Error, TEXT("Trying to add null to actor pool."));
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("ActorPool Add"));
+	Pool.Push(ActorToAdd);
 }
 
 

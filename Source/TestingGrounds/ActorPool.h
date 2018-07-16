@@ -21,4 +21,8 @@ public:
 	void Return(AActor* ActorToReturn);
 	
 	void Add(AActor* ActorToAdd);
+
+private:
+	UPROPERTY()
+	TArray<AActor*> Pool;
 };
