@@ -4,6 +4,7 @@
 #include "../ActorPool.h"
 #include "WorldCollision.h"
 #include "DrawDebugHelpers.h"
+#include "AI/Navigation/NavigationSystem.h"
 
 
 // Sets default values
@@ -12,8 +13,10 @@ ATile::ATile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	BoundsMin = FVector(0., -2000., 0.);
-	BoundsMax = FVector(4000., 2000., 0.);
+	BoundsMin = FVector(0, -2000, 0);
+	BoundsMax = FVector(4000, 2000, 0);
+
+	NavigationBoundsOffset = FVector(2000, 0, 0);
 }
 
 void ATile::SetPool(UActorPool* InPool)
@@ -25,8 +28,11 @@ void ATile::SetPool(UActorPool* InPool)
 		UE_LOG(LogTemp, Error, TEXT("Not enough actors in pool."));
 		return;
 	}
-	UE_LOG(LogTemp, Error, TEXT("[%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName());
-	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName());
+	FVector TileCenter = GetActorLocation() + NavigationBoundsOffset;
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting NavMeshBoundsVolume location to: {%s}"), *GetName(), *TileCenter.ToString());
+	NavMeshBoundsVolume->SetActorLocation(TileCenter);
+	GetWorld()->GetNavigationSystem()->Build();
 }
 
 // Called when the game starts or when spawned

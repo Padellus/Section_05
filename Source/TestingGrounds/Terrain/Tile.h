@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Generate")
 	FVector BoundsMax;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Navigation")
+	FVector NavigationBoundsOffset;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
