@@ -5,6 +5,7 @@
 #include "WorldCollision.h"
 #include "DrawDebugHelpers.h"
 #include "AI/Navigation/NavigationSystem.h"
+#include "Engine/World.h"
 
 
 // Sets default values
@@ -98,7 +99,7 @@ bool ATile::FindEmptyLocation(FVector& OutLocation, float Radius)
 void ATile::PlaceActor(TSubclassOf<AActor> Spawnable, FSpawnPosition SpawnPosition)
 {
 	AActor* Spawned = GetWorld()->SpawnActor<AActor>(Spawnable);
-	if (!Spawned) {
+	if (Spawned == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("Failed to spawn actor in PlaceActor."));
 	}
 	Spawned->SetActorRelativeLocation(SpawnPosition.Location);
@@ -110,8 +111,10 @@ void ATile::PlaceActor(TSubclassOf<AActor> Spawnable, FSpawnPosition SpawnPositi
 
 void ATile::PlaceActor(TSubclassOf<APawn> Spawnable, FSpawnPosition SpawnPosition)
 {
-	APawn* Spawned = GetWorld()->SpawnActor<APawn>(Spawnable);
-	if (!Spawned) {
+	FActorSpawnParameters SpawnParams = FActorSpawnParameters();
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	APawn* Spawned = GetWorld()->SpawnActor<APawn>(Spawnable, SpawnParams);
+	if (Spawned == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("Failed to spawn actor in PlaceActor."));
 	}
 	Spawned->SetActorRelativeLocation(SpawnPosition.Location);
